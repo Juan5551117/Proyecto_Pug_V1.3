@@ -17,30 +17,22 @@ $nombre=trim($_POST['usuario']);
 $contraseña= $_POST['clave'];
 
 $consulta = $conn->prepare("SELECT id,password FROM usuarios WHERE nombre= ?");
-//bind param es para asignar valores a una consulta de manera segura
 $consulta->bind_param("s",$nombre);
 $consulta->execute();
-$consulta->store_result();
 $consulta->bind_result($id,$hash);
 
-if($consulta->num_rows==1){
-    $consulta->fetch();
-    if(password_verify($contraseña, $hash)){
-        $_SESSION['userid']= $id ;
+if ($consulta->fetch()) {
+    if (password_verify($contraseña, $hash)) {
+        $_SESSION['userid']= $id;
         $_SESSION['nombre']= $nombre;
         header("Location: inicio.php");
         exit();
-
-    }else{
+    } else {
         $error = "Contraseña incorrecta";
-
     }
-}else{
-    $error = "usuario no encontrado";
+} else {
+    $error = "Usuario no encontrado";
 }
-$consulta->close();
-}
-?>
 
 
 
